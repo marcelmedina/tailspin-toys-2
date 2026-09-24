@@ -24,6 +24,32 @@ test.describe('Game Listing and Navigation', () => {
     });
   });
 
+  test('should filter games by category and publisher together', async ({ page }) => {
+    await page.goto('/');
+    const firstCard = page.getByTestId('game-card').first();
+    const categoryId = await firstCard.getAttribute('data-category-id');
+    const publisherId = await firstCard.getAttribute('data-publisher-id');
+    const categoryFilter = page.getByTestId(`category-filter-${categoryId}`);
+
+    await test.step('Apply a category and publisher filter', async () => {
+      await categoryFilter.check();
+      await page.getByTestId('publisher-filter').selectOption(publisherId ?? '');
+      await page.getByTestId('apply-filters').click();
+    });
+
+    await test.step('Verify query parameters and matching result', async () => {
+      await expect(page).toHaveURL(new RegExp(`[?&]category=${categoryId}(&|$)`));
+      await expect(page).toHaveURL(new RegExp(`[?&]publisher=${publisherId}(&|$)`));
+      await expect(page.locator('[data-testid="game-card"]:visible')).toHaveCount(1);
+    });
+  });
+
+  test('should show an empty state when filters match no games', async ({ page }) => {
+    await page.goto('/?category=99999');
+    await expect(page.getByTestId('filtered-empty-state')).toBeVisible();
+    await expect(page.locator('[data-testid="game-card"]:visible')).toHaveCount(0);
+  });
+
   test('should navigate to correct game details page when clicking on a game', async ({ page }) => {
     let gameId: string | null;
     let gameTitle: string | null;
