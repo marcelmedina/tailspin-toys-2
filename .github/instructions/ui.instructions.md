@@ -49,7 +49,13 @@ Refer to technology-specific instruction files:
 - Create reusable components for common UI patterns
 - Keep components focused on a single responsibility
 - Use props for configuration, not duplication
-- Document component APIs with TypeScript types
+- Document every reusable component's `Props` interface so its API and non-obvious prop constraints are self-explanatory
+
+### Comments and formatting
+
+- Comments must explain intent, accessibility reasoning, or a non-obvious design decision. Do not restate markup, class names, or event-handler mechanics.
+- Update or remove stale comments whenever the related component changes.
+- Follow the repository TypeScript formatting rules: two-space indentation, single quotes, semicolons, and trailing commas in multiline lists.
 
 ## Development Workflow
 
